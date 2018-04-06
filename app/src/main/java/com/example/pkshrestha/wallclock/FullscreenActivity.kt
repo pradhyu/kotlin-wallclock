@@ -1,10 +1,24 @@
 package com.example.pkshrestha.wallclock
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
+import com.example.utils.services.RestCalls
+import khronos.Dates
+import khronos.toString
 import kotlinx.android.synthetic.main.activity_fullscreen.*
+import android.os.CountDownTimer
+import android.support.v4.app.ActivityOptionsCompat
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -44,6 +58,79 @@ class FullscreenActivity : AppCompatActivity() {
         false
     }
 
+    inner class AsyncTaskExecutor: android.os.AsyncTask<String, String, String>() {
+        override fun onPreExecute() {
+            super.onPreExecute()
+            Log.i("Weather", "preExecute here ")
+        }
+
+        override fun doInBackground(vararg p0: String?): String {
+
+            var Result: String = "";
+            //It will return current data and time.
+            val API_URL = "http://androidpala.com/tutorial/http.php?get=1";
+
+            try {
+
+                textWeather.text=RestCalls.getCaryWeather() + " F"
+            } catch(Ex: Exception) {
+                Log.d("", "Error in doInBackground " + Ex.message);
+            }
+            return Result
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+
+            Log.i("Weather", "on Post Execute")
+
+        }
+
+    }
+
+    private fun startTimer() {
+        val mTimer = object : CountDownTimer(2000000, 1000) {
+            override fun onFinish() {
+                txtCounter.text="END of Timer"
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+                    val str: String = txtCounter.toString()
+                    //update the ui with the milliseconds left
+                    txtCounter.text = (millisUntilFinished/1000).toString()
+            }
+
+        }.start()
+    }
+
+    private fun getCurrentTimeStamp(): String {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
+        val now = Date()
+        return simpleDateFormat.format(now)
+    }
+
+    // called when it receives a tick from system
+    private fun makeBroadcastReceiver(): BroadcastReceiver {
+        return object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent?) {
+                if (intent?.action == Intent.ACTION_TIME_TICK) {
+                    txtCounter.text = getCurrentTimeStamp()
+                    // update weather
+                    // fix it later since calling it every second is an overkill
+                    AsyncTaskExecutor().execute();
+                }
+            }
+        }
+    }
+
+
+    private fun showProductList (){
+        val userId=1
+        val options = null
+
+        startActivity(productListIntent(userId = txtCounter.text.toString()))
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,6 +141,21 @@ class FullscreenActivity : AppCompatActivity() {
 
         // Set up the user interaction to manually show or hide the system UI.
         fullscreen_content.setOnClickListener { toggle() }
+        fullscreen_content.text= Dates.today.toString("dd/MM/yyyy")
+
+        // show products
+        btn_show_products.setOnClickListener {showProductList() }
+
+        AsyncTaskExecutor().execute();
+
+
+        // counter async , CommonPool means background UI means UI thread
+         async (CommonPool) {
+             val str: String = txtCounter.toString()
+             txtCounter.text= "100"
+         }
+        // start the countdown timer
+        startTimer()
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
@@ -85,6 +187,7 @@ class FullscreenActivity : AppCompatActivity() {
         // Schedule a runnable to remove the status and navigation bar after a delay
         mHideHandler.removeCallbacks(mShowPart2Runnable)
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY.toLong())
+        startTimer()
     }
 
     private fun show() {

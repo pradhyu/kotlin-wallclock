@@ -16,44 +16,65 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:padding="50px">
 
             <TextClock
                 android:id="@+id/textClock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAllCaps="false"
-                android:textSize="200sp"
+                android:textSize="100sp"
                 android:textStyle="bold" />
+
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/fullscreen_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="bottom|center"
+                android:keepScreenOn="true"
+                android:text="@string/dummy_content"
+                android:textColor="@android:color/black"
+                android:textSize="60sp"
+                android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="98dp"
-                    android:layout_height="100dp"
-                    android:background="@android:drawable/star_big_on"
-                    app:srcCompat="@android:color/transparent" />
+            <TextView
+                android:id="@+id/textWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weather"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="60sp" />
 
-                <TextView
-                    android:id="@+id/fullscreen_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="bottom|center"
-                    android:keepScreenOn="true"
-                    android:text="@string/dummy_content"
-                    android:textColor="@color/black_overlay"
-                    android:textSize="50sp"
-                    android:textStyle="bold" />
 
-            </GridLayout>
+
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/txtCounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@android:color/background_dark"
+                android:textSize="100dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_show_products"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Products" />
         </TableRow>
 
     </TableLayout>
